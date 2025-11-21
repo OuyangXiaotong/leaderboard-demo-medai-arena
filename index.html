@@ -157,9 +157,7 @@
                             <th class="px-4 py-3 text-left text-xs font-medium text-slate-600 uppercase">Action</th>
                         </tr>
                     </thead>
-                    <tbody id="models-tbody" class="divide-y divide-slate-200">
-                        <!-- JS will populate here -->
-                    </tbody>
+                    <tbody id="leaderboard-body"></tbody>
                 </table>
             </div>
         </div>
@@ -237,8 +235,35 @@
         </div>
     </footer>
 
-    <script>
-
-    </script>
+<script>
+    // 等待网页加载完成
+    document.addEventListener('DOMContentLoaded', function() {
+        // 1. 去读取 data 文件夹里的 models.json 文件
+        fetch('./data/models.json')
+            .then(response => response.json()) // 把文件转换成数据
+            .then(data => {
+                // 2. 找到网页上的表格盒子
+                const tableBody = document.getElementById('leaderboard-body');
+                
+                // 3. 把数据一条一条填进去
+                data.forEach(model => {
+                    // 拼接每一行的样子
+                    const row = `
+                        <tr>
+                            <td>#${model.rank}</td>
+                            <td><b>${model.name}</b></td>
+                            <td>${model.type}</td>
+                            <td><b>${model.elo}</b></td>
+                            <td>${model.organization}</td>
+                            <td>${model.license}</td>
+                        </tr>
+                    `;
+                    // 塞进表格里
+                    tableBody.innerHTML += row;
+                });
+            })
+            .catch(error => console.error('fail to read the data:', error));
+    });
+</script>
 </body>
 </html>
