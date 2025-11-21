@@ -144,6 +144,29 @@
             </div>
         </div>
 
+        <!-- 🔵 Your custom minimal table section -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 mb-6">
+            <h2 class="text-xl font-semibold text-slate-800 mb-3">Quick Model Overview</h2>
+
+            <div class="overflow-x-auto">
+                <table id="models-table" class="min-w-full divide-y divide-slate-200">
+                    <thead class="bg-slate-50">
+                        <tr>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-slate-600 uppercase">Name</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-slate-600 uppercase">Type</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-slate-600 uppercase">Elo</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-slate-600 uppercase">Org</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-slate-600 uppercase">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="models-tbody" class="divide-y divide-slate-200">
+                        <!-- JS will populate here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        
         <!-- Table -->
         <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
             <div class="overflow-x-auto">
