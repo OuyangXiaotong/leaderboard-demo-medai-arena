@@ -100,33 +100,36 @@
 
                 <!-- Modality/Region Filter -->
                 <div class="flex-1">
-                    <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 block">Modality / Region</label>
-                    <select id="modality-select" onchange="filterModality()" class="w-full px-3 py-1.5 rounded-md border border-slate-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                    <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 block">Modality</label>
+                    <select id="modalityFilter" onchange="filterData()" class="w-full px-3 py-1.5 rounded-md border border-slate-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
                         <option value="all">All Modalities</option>
-                        <optgroup label="Imaging Modalities">
-                            <option value="xray">X-Ray</option>
-                            <option value="ct">CT Scan</option>
-                            <option value="mri">MRI</option>
-                            <option value="ultrasound">Ultrasound</option>
-                            <option value="mammography">Mammography</option>
-                            <option value="pet">PET Scan</option>
-                            <option value="fundus">Fundus/Retinal</option>
-                            <option value="dermoscopy">Dermoscopy</option>
-                            <option value="pathology">Pathology/Histology</option>
-                            <option value="endoscopy">Endoscopy</option>
-                        </optgroup>
-                        <optgroup label="Body Regions">
-                            <option value="chest">Chest/Thorax</option>
-                            <option value="brain">Brain/Neuro</option>
-                            <option value="abdomen">Abdomen</option>
-                            <option value="cardiac">Cardiac/Heart</option>
-                            <option value="musculoskeletal">Musculoskeletal</option>
-                            <option value="breast">Breast</option>
-                            <option value="skin">Skin/Dermatology</option>
-                            <option value="eye">Eye/Ophthalmology</option>
-                        </optgroup>
+                        <option value="xray">X-Ray</option>
+                        <option value="ct">CT Scan</option>
+                        <option value="mri">MRI</option>
+                        <option value="ultrasound">Ultrasound</option>
+                        <option value="mammography">Mammography</option>
+                        <option value="pet">PET Scan</option>
+                        <option value="fundus">Fundus/Retinal</option>
+                        <option value="dermoscopy">Dermoscopy</option>
+                        <option value="pathology">Pathology/Histology</option>
+                        <option value="endoscopy">Endoscopy</option>
                     </select>
                 </div>
+
+            <div class="flex-1">
+                <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 block">Region</label>
+                <select id="regionFilter" onchange="filterData()" class="w-full px-3 py-1.5 rounded-md border border-slate-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                    <option value="all">All Regions</option>
+                    <option value="chest">Chest/Thorax</option>
+                    <option value="brain">Brain/Neuro</option>
+                    <option value="abdomen">Abdomen</option>
+                    <option value="cardiac">Cardiac/Heart</option>
+                    <option value="musculoskeletal">Musculoskeletal</option>
+                    <option value="breast">Breast</option>
+                    <option value="skin">Skin/Dermatology</option>
+                    <option value="eye">Eye/Ophthalmology</option>
+                </select>
+            </div>
             </div>
         </div>
 
