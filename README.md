@@ -1,11 +1,10 @@
-https://ouyangxiaotong.github.io/leaderboard-demo--medai-arena/
 # MedAI Arena – Comprehensive Medical AI Leaderboard 🏥🤖
 **The most complete crowdsourced leaderboard for medical AI models worldwide**  
 From Med-PaLM 2 and GPT-4o Medical to specialized detection/segmentation models across all imaging modalities.
 **Live Demo**: https://ouyangxiaotong.github.io/leaderboard-demo--medai-arena
 ![MedAI Arena](screenshot.png)
 ## ✨ Features
-- 87+ state-of-the-art medical AI models (constantly updated)
+- 5+ state-of-the-art medical AI models (constantly updated)
 - Covers **LLMs**, **Computer Vision**, and **Multimodal** models
 - 8 task types: Detection • Segmentation • Classification • 3D Reconstruction • Registration • Synthesis • Q&A • Multimodal Reasoning
 - 10+ imaging modalities: X-Ray • CT • MRI • Ultrasound • Mammography • Fundus • Dermoscopy • Pathology • Endoscopy • PET • etc.
@@ -20,13 +19,6 @@ From Med-PaLM 2 and GPT-4o Medical to specialized detection/segmentation models 
 | 4    | DeepBrainSeg 2.0       | Vision     | 1288      | Harvard Medical      | Brain Tumor Segmentation (MRI)|
 | 5    | MammoAI-Pro            | Vision     | 1283      | Google Health        | Breast Cancer Detection       |
 > Scores come from anonymous physician + AI expert blind voting (LMSYS Arena style)
-## 🚀 Deploy Your Own in 30 Seconds
-```bash
-# 1. Fork this repo
-# 2. Go to Settings → Pages → Source: main branch → Save
-# 3. Visit https://your-username.github.io/leaderboard-demo--medai-arena
-Done!
-```
 Every push to `index.html` updates the site automatically in ~10 seconds.
 ## 🤝 Contributing (PRs Welcome!)
 We enthusiastically welcome:
