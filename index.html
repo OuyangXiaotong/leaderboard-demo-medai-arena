@@ -7,19 +7,21 @@
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        .medal-1 { color: #FFD700; } .medal-2 { color: #C0C0C0; } .medal-3 { color: #CD7F32; }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-        .dropdown-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
-        .dropdown-content.show { max-height: 500px; }
         .category-badge-llm { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
         .category-badge-vision { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .category-badge-multimodal { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
         .category-badge-detection { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
         .category-badge-segmentation { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
         .category-badge-classification { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
         .category-badge-reconstruction { background: linear-gradient(135deg, #30cfd0 0%, #330867 100%); }
         .category-badge-registration { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); color: #333; }
         .category-badge-synthesis { background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); color: #333; }
+        .category-badge-qa { background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%); }
+        .sort-indicator { opacity: 0.3; }
+        .sort-indicator.active { opacity: 1; }
+        tr:hover td { background-color: #f8fafc; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col">
@@ -38,9 +40,12 @@
                 </div>
                 <div class="hidden md:flex space-x-8 items-center">
                     <a href="#" class="text-blue-600 font-medium border-b-2 border-blue-600 h-16 flex items-center">Leaderboard</a>
-                    <a href="#" class="text-slate-500 hover:text-slate-700 font-medium h-16 flex items-center">About</a>
-                    <a href="https://github.com/OuyangXiaotong/leaderboard-demo-medai-arena/issues/new" target="_blank" class="你的按钮样式类名">Submit Model</a>
-                    <a href="#" class="text-slate-500 hover:text-slate-700 font-medium h-16 flex items-center">Blog</a>
+                    <a href="#about" class="text-slate-500 hover:text-slate-700 font-medium h-16 flex items-center">About</a>
+                    <a href="https://github.com/OuyangXiaotong/leaderboard-demo-medai-arena/issues/new"
+                       target="_blank"
+                       class="text-slate-500 hover:text-slate-700 font-medium h-16 flex items-center">
+                        Submit Model
+                    </a>
                 </div>
                 <div class="flex items-center">
                     <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
@@ -53,52 +58,54 @@
 
     <!-- Main Content -->
     <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        
+
         <!-- Header Section -->
         <div class="mb-8 text-center max-w-4xl mx-auto">
             <h1 class="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">Comprehensive Medical AI Leaderboard</h1>
             <p class="text-lg text-slate-600">
-                Crowdsourced evaluation platform for Medical AI models including LLMs, Computer Vision, and specialized diagnostic systems. 
+                Crowdsourced evaluation platform for Medical AI models including LLMs, Computer Vision, and specialized diagnostic systems.
                 We evaluate models across multiple domains: clinical reasoning, medical imaging, diagnostic accuracy, and research capabilities.
             </p>
-            <div class="mt-4 flex justify-center gap-6 text-sm">
-                <span class="text-slate-500">Last updated: <span id="last-updated">December 2025</span></span>
-                <span class="text-slate-500">•</span>
-                <span class="text-slate-500">Total Models: <span class="font-semibold" id="model-count">5+(demo)</span></span>
+            <div class="mt-4 flex justify-center gap-6 text-sm flex-wrap">
+                <span class="text-slate-500">Last updated: <span id="last-updated">May 2026</span></span>
+                <span class="text-slate-500 hidden sm:inline">•</span>
+                <span class="text-slate-500">Total Models: <span class="font-semibold text-slate-700" id="model-count">—</span></span>
+                <span class="text-slate-500 hidden sm:inline">•</span>
+                <span class="text-slate-500">Shown: <span class="font-semibold text-slate-700" id="shown-count">—</span></span>
             </div>
         </div>
 
-        <!-- Advanced Filters Section -->
+        <!-- Filters Section -->
         <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 mb-6">
             <div class="flex flex-col lg:flex-row gap-4">
-                
-                <!-- Main Category Filter -->
+
+                <!-- Category Filter -->
                 <div class="flex-1">
                     <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 block">Category</label>
                     <div class="flex flex-wrap gap-2">
-                        <button onclick="filterMainCategory('all')" class="main-cat-btn active px-3 py-1.5 rounded-md text-sm font-medium bg-blue-600 text-white">All Models</button>
-                        <button onclick="filterMainCategory('llm')" class="main-cat-btn px-3 py-1.5 rounded-md text-sm font-medium bg-slate-100 text-slate-700 hover:bg-slate-200">LLMs</button>
-                        <button onclick="filterMainCategory('vision')" class="main-cat-btn px-3 py-1.5 rounded-md text-sm font-medium bg-slate-100 text-slate-700 hover:bg-slate-200">Computer Vision</button>
-                        <button onclick="filterMainCategory('multimodal')" class="main-cat-btn px-3 py-1.5 rounded-md text-sm font-medium bg-slate-100 text-slate-700 hover:bg-slate-200">Multimodal</button>
+                        <button onclick="filterMainCategory('all', this)" class="main-cat-btn px-3 py-1.5 rounded-md text-sm font-medium bg-blue-600 text-white">All Models</button>
+                        <button onclick="filterMainCategory('llm', this)" class="main-cat-btn px-3 py-1.5 rounded-md text-sm font-medium bg-slate-100 text-slate-700 hover:bg-slate-200">LLMs</button>
+                        <button onclick="filterMainCategory('vision', this)" class="main-cat-btn px-3 py-1.5 rounded-md text-sm font-medium bg-slate-100 text-slate-700 hover:bg-slate-200">Computer Vision</button>
+                        <button onclick="filterMainCategory('multimodal', this)" class="main-cat-btn px-3 py-1.5 rounded-md text-sm font-medium bg-slate-100 text-slate-700 hover:bg-slate-200">Multimodal</button>
                     </div>
                 </div>
 
                 <!-- Task Type Filter -->
                 <div class="flex-1">
                     <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 block">Task Type</label>
-                    <div class="flex flex-wrap gap-2" id="task-filters">
-                        <button onclick="filterTask('all')" class="task-btn active px-3 py-1.5 rounded-md text-xs font-medium bg-slate-600 text-white">All Tasks</button>
-                        <button onclick="filterTask('detection')" class="task-btn px-3 py-1.5 rounded-md text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200">Detection</button>
-                        <button onclick="filterTask('segmentation')" class="task-btn px-3 py-1.5 rounded-md text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200">Segmentation</button>
-                        <button onclick="filterTask('classification')" class="task-btn px-3 py-1.5 rounded-md text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200">Classification</button>
-                        <button onclick="filterTask('reconstruction')" class="task-btn px-3 py-1.5 rounded-md text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200">3D Recon</button>
-                        <button onclick="filterTask('registration')" class="task-btn px-3 py-1.5 rounded-md text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200">Registration</button>
-                        <button onclick="filterTask('synthesis')" class="task-btn px-3 py-1.5 rounded-md text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200">Synthesis</button>
-                        <button onclick="filterTask('qa')" class="task-btn px-3 py-1.5 rounded-md text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200">Q&A</button>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="filterTask('all', this)" class="task-btn px-3 py-1.5 rounded-md text-xs font-medium bg-slate-600 text-white">All Tasks</button>
+                        <button onclick="filterTask('detection', this)" class="task-btn px-3 py-1.5 rounded-md text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200">Detection</button>
+                        <button onclick="filterTask('segmentation', this)" class="task-btn px-3 py-1.5 rounded-md text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200">Segmentation</button>
+                        <button onclick="filterTask('classification', this)" class="task-btn px-3 py-1.5 rounded-md text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200">Classification</button>
+                        <button onclick="filterTask('reconstruction', this)" class="task-btn px-3 py-1.5 rounded-md text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200">3D Recon</button>
+                        <button onclick="filterTask('registration', this)" class="task-btn px-3 py-1.5 rounded-md text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200">Registration</button>
+                        <button onclick="filterTask('synthesis', this)" class="task-btn px-3 py-1.5 rounded-md text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200">Synthesis</button>
+                        <button onclick="filterTask('qa', this)" class="task-btn px-3 py-1.5 rounded-md text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200">Q&amp;A</button>
                     </div>
                 </div>
 
-                <!-- Modality/Region Filter -->
+                <!-- Modality Filter -->
                 <div class="flex-1">
                     <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 block">Modality</label>
                     <select id="modalityFilter" onchange="filterData()" class="w-full px-3 py-1.5 rounded-md border border-slate-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
@@ -113,106 +120,129 @@
                         <option value="dermoscopy">Dermoscopy</option>
                         <option value="pathology">Pathology/Histology</option>
                         <option value="endoscopy">Endoscopy</option>
+                        <option value="multiple">Multi-modal</option>
                     </select>
                 </div>
 
-            <div class="flex-1">
-                <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 block">Region</label>
-                <select id="regionFilter" onchange="filterData()" class="w-full px-3 py-1.5 rounded-md border border-slate-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
-                    <option value="all">All Regions</option>
-                    <option value="chest">Chest/Thorax</option>
-                    <option value="brain">Brain/Neuro</option>
-                    <option value="abdomen">Abdomen</option>
-                    <option value="cardiac">Cardiac/Heart</option>
-                    <option value="musculoskeletal">Musculoskeletal</option>
-                    <option value="breast">Breast</option>
-                    <option value="skin">Skin/Dermatology</option>
-                    <option value="eye">Eye/Ophthalmology</option>
-                </select>
-            </div>
+                <!-- Region Filter -->
+                <div class="flex-1">
+                    <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 block">Region</label>
+                    <select id="regionFilter" onchange="filterData()" class="w-full px-3 py-1.5 rounded-md border border-slate-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                        <option value="all">All Regions</option>
+                        <option value="chest">Chest/Thorax</option>
+                        <option value="brain">Brain/Neuro</option>
+                        <option value="abdomen">Abdomen</option>
+                        <option value="cardiac">Cardiac/Heart</option>
+                        <option value="musculoskeletal">Musculoskeletal</option>
+                        <option value="breast">Breast</option>
+                        <option value="skin">Skin/Dermatology</option>
+                        <option value="eye">Eye/Ophthalmology</option>
+                        <option value="multiple">Multiple</option>
+                    </select>
+                </div>
             </div>
         </div>
 
-        <!-- Search and View Controls -->
+        <!-- Search Bar -->
         <div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
-            <div class="relative w-full sm:w-64">
+            <div class="relative w-full sm:w-72">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <svg class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
                 </div>
-                <input type="text" id="search-input" placeholder="Search model name..." class="pl-10 block w-full rounded-md border border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 sm:text-sm transition-colors">
+                <input type="text" id="search-input" placeholder="Search model or organization..."
+                    class="pl-10 block w-full rounded-md border border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 sm:text-sm transition-colors">
             </div>
+            <button onclick="resetFilters()" class="text-sm text-slate-500 hover:text-blue-600 transition-colors underline underline-offset-2">
+                Reset all filters
+            </button>
         </div>
 
-        <!-- 🔵 Your custom minimal table section -->
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 mb-6">
-            <h2 class="text-xl font-semibold text-slate-800 mb-3">Quick Model Overview</h2>
-
-            <div class="overflow-x-auto">
-                <table id="models-table" class="min-w-full divide-y divide-slate-200">
-                    <thead class="bg-slate-50">
-                        <tr>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-slate-600 uppercase">Rank</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-slate-600 uppercase">Name</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-slate-600 uppercase">Type</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-slate-600 uppercase">Elo</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-slate-600 uppercase">Orgization</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-slate-600 uppercase">License</th>
-                        </tr>
-                    </thead>
-                    <tbody id="leaderboard-body"></tbody>
-                </table>
-            </div>
-        </div>
-
-        
-        <!-- Table -->
+        <!-- Leaderboard Table -->
         <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-slate-200">
                     <thead class="bg-slate-50">
                         <tr>
                             <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider w-16">Rank</th>
-                            <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer group hover:bg-slate-100" onclick="sortTable('name')">
-                                Model
-                                <span class="inline-block ml-1 invisible group-hover:visible">↕</span>
+                            <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:bg-slate-100 select-none" onclick="sortTable('name')">
+                                Model <span id="sort-name" class="sort-indicator ml-1">↕</span>
                             </th>
                             <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Type</th>
-                            <th scope="col" class="px-6 py-4 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer group hover:bg-slate-100" onclick="sortTable('elo')">
-                                <div class="flex items-center justify-center">
-                                    Arena Elo
-                                    <span class="inline-block ml-1 invisible group-hover:visible">↓</span>
-                                </div>
+                            <th scope="col" class="px-6 py-4 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:bg-slate-100 select-none" onclick="sortTable('elo')">
+                                Arena Elo <span id="sort-elo" class="sort-indicator active ml-1">↓</span>
                             </th>
                             <th scope="col" class="px-6 py-4 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider hidden md:table-cell">95% CI</th>
-                            <th scope="col" class="px-6 py-4 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider hidden sm:table-cell">Votes</th>
-                            <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider hidden xl:table-cell">Task/Modality</th>
+                            <th scope="col" class="px-6 py-4 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider hidden sm:table-cell cursor-pointer hover:bg-slate-100 select-none" onclick="sortTable('votes')">
+                                Votes <span id="sort-votes" class="sort-indicator ml-1">↕</span>
+                            </th>
+                            <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider hidden xl:table-cell">Task / Modality</th>
                             <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider hidden lg:table-cell">Organization</th>
                             <th scope="col" class="px-6 py-4 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider hidden lg:table-cell">License</th>
                         </tr>
                     </thead>
                     <tbody id="leaderboard-body" class="bg-white divide-y divide-slate-200">
-                        <!-- Rows will be populated by JS -->
+                        <tr>
+                            <td colspan="9" class="px-6 py-12 text-center text-slate-400">Loading models...</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
         </div>
-        
+
         <div class="mt-6 text-center">
-            <button id="show-more-btn" class="text-blue-600 hover:text-blue-800 font-medium text-sm">Show more models</button>
+            <button id="show-more-btn" class="hidden text-blue-600 hover:text-blue-800 font-medium text-sm transition-colors">
+                Show more models
+            </button>
         </div>
 
     </main>
 
+    <!-- About Section -->
+    <section id="about" class="bg-white border-t border-slate-200 py-12 mt-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-2xl font-bold text-slate-900 mb-8 text-center">About MedAI Arena</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="text-center">
+                    <div class="bg-blue-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">
+                        <svg class="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                        </svg>
+                    </div>
+                    <h3 class="font-semibold text-slate-800 mb-2">Arena Elo Scoring</h3>
+                    <p class="text-sm text-slate-500">Rankings use the Elo rating system adapted from chess and LMSYS Chatbot Arena, reflecting relative model performance from expert pairwise comparisons.</p>
+                </div>
+                <div class="text-center">
+                    <div class="bg-green-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">
+                        <svg class="w-6 h-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                    </div>
+                    <h3 class="font-semibold text-slate-800 mb-2">Expert-Driven Evaluation</h3>
+                    <p class="text-sm text-slate-500">Scores are derived from votes by medical professionals and AI researchers, ensuring evaluations reflect real-world clinical utility.</p>
+                </div>
+                <div class="text-center">
+                    <div class="bg-purple-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">
+                        <svg class="w-6 h-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                        </svg>
+                    </div>
+                    <h3 class="font-semibold text-slate-800 mb-2">Open Source</h3>
+                    <p class="text-sm text-slate-500">All data and code are publicly available. Submit a model via GitHub issue or contribute improvements to the platform directly.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Footer -->
-    <footer class="bg-white border-t border-slate-200 mt-12 py-12">
+    <footer class="bg-white border-t border-slate-200 py-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div>
                     <h3 class="text-sm font-semibold text-slate-500 tracking-wider uppercase">About</h3>
                     <p class="mt-4 text-base text-slate-500">
-                        MedAI Arena is an open-source project dedicated to benchmarking LLMs on medical tasks. We use a combination of automated benchmarks and expert human evaluation.
+                        MedAI Arena is an open-source project dedicated to benchmarking medical AI models. We use a combination of automated benchmarks and expert human evaluation.
                     </p>
                 </div>
                 <div>
@@ -226,47 +256,211 @@
                 <div>
                     <h3 class="text-sm font-semibold text-slate-500 tracking-wider uppercase">Connect</h3>
                     <div class="flex space-x-6 mt-4">
-                       <a href="https://github.com/OuyangXiaotong/leaderboard-demo-medai-arena" target="_blank">GitHub</a>
-                            <span class="sr-only">GitHub</span>
-                            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.288.63-1.581-2.615-.298-5.364-1.306-5.364-5.814 0-1.286.46-2.339 1.213-3.194-.121-.3-.525-1.524.115-3.156 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.64 1.632.236 2.856.116 3.156.754.856 1.212 1.908 1.212 3.194 0 4.517-2.753 5.513-5.377 5.807.36.31.682.928.682 1.872 0 1.352-.012 2.443-.012 2.774 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd" /></svg>
+                        <a href="https://github.com/OuyangXiaotong/leaderboard-demo-medai-arena" target="_blank"
+                           class="text-slate-400 hover:text-slate-600 flex items-center gap-2">
+                            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.288.63-1.581-2.615-.298-5.364-1.306-5.364-5.814 0-1.286.46-2.339 1.213-3.194-.121-.3-.525-1.524.115-3.156 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.64 1.632.236 2.856.116 3.156.754.856 1.212 1.908 1.212 3.194 0 4.517-2.753 5.513-5.377 5.807.36.31.682.928.682 1.872 0 1.352-.012 2.443-.012 2.774 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd" />
+                            </svg>
+                            <span class="text-sm font-medium">GitHub</span>
                         </a>
                     </div>
                 </div>
             </div>
             <div class="mt-8 border-t border-slate-200 pt-8 text-center">
-                <p class="text-base text-slate-400">&copy; 2025 MedAI Arena. All rights reserved.</p>
+                <p class="text-base text-slate-400">&copy; 2026 MedAI Arena. All rights reserved.</p>
             </div>
         </div>
     </footer>
 
 <script>
-    // 等待网页加载完成
-    document.addEventListener('DOMContentLoaded', function() {
-        // 1. 去读取 data 文件夹里的 models.json 文件
+    const TASK_LABELS = {
+        detection: 'Detection', segmentation: 'Segmentation', classification: 'Classification',
+        reconstruction: '3D Recon', registration: 'Registration', synthesis: 'Synthesis', qa: 'Q&A'
+    };
+    const MODALITY_LABELS = {
+        xray: 'X-Ray', ct: 'CT Scan', mri: 'MRI', ultrasound: 'Ultrasound',
+        mammography: 'Mammography', pet: 'PET Scan', fundus: 'Fundus',
+        dermoscopy: 'Dermoscopy', pathology: 'Pathology', endoscopy: 'Endoscopy', multiple: 'Multi-modal'
+    };
+    const OPEN_LICENSES = ['mit', 'apache 2.0', 'bsd', 'cc by-nc 4.0'];
+    const PAGE_SIZE = 10;
+
+    let allModels = [];
+    let filteredModels = [];
+    let showAll = false;
+    let currentSort = { column: 'elo', direction: 'desc' };
+    let currentFilters = { category: 'all', task: 'all', modality: 'all', region: 'all', search: '' };
+
+    function escapeHtml(str) {
+        return String(str || '')
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function renderTable(models) {
+        const tbody = document.getElementById('leaderboard-body');
+        const display = showAll ? models : models.slice(0, PAGE_SIZE);
+        document.getElementById('shown-count').textContent = display.length + ' / ' + models.length;
+
+        if (display.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="9" class="px-6 py-16 text-center">
+                <p class="text-lg font-medium text-slate-500">No models match your filters</p>
+                <p class="text-sm text-slate-400 mt-1">Try adjusting your search or filter criteria</p>
+            </td></tr>`;
+            document.getElementById('show-more-btn').classList.add('hidden');
+            return;
+        }
+
+        tbody.innerHTML = display.map((model, idx) => {
+            const rank = idx + 1;
+            let rankHtml =
+                rank === 1 ? '<span class="text-xl">🥇</span>' :
+                rank === 2 ? '<span class="text-xl">🥈</span>' :
+                rank === 3 ? '<span class="text-xl">🥉</span>' :
+                `<span class="text-slate-500 font-mono">#${rank}</span>`;
+
+            const typeKey = model.type.toLowerCase();
+            const taskKey = (model.task || 'qa').toLowerCase();
+            const isOpen = OPEN_LICENSES.includes((model.license || '').toLowerCase());
+
+            return `<tr class="transition-colors">
+                <td class="px-6 py-4 whitespace-nowrap text-center">${rankHtml}</td>
+                <td class="px-6 py-4 whitespace-nowrap font-semibold text-slate-900">${escapeHtml(model.name)}</td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium text-white category-badge-${typeKey}">${escapeHtml(model.type)}</span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-center">
+                    <span class="text-lg font-bold text-slate-900">${model.elo}</span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-center text-slate-500 text-sm hidden md:table-cell">${escapeHtml(model.ci || 'N/A')}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-center text-slate-600 text-sm hidden sm:table-cell">${(model.votes || 0).toLocaleString()}</td>
+                <td class="px-6 py-4 whitespace-nowrap hidden xl:table-cell">
+                    <div class="flex flex-wrap gap-1">
+                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium text-white category-badge-${taskKey}">${escapeHtml(TASK_LABELS[taskKey] || model.task || '')}</span>
+                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-600">${escapeHtml(MODALITY_LABELS[model.modality] || model.modality || '')}</span>
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-slate-600 text-sm hidden lg:table-cell">${escapeHtml(model.organization || '')}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-center hidden lg:table-cell">
+                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${isOpen ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800'}">${escapeHtml(model.license || '')}</span>
+                </td>
+            </tr>`;
+        }).join('');
+
+        const btn = document.getElementById('show-more-btn');
+        if (models.length > PAGE_SIZE) {
+            btn.classList.remove('hidden');
+            btn.textContent = showAll ? 'Show less' : `Show ${models.length - PAGE_SIZE} more models`;
+        } else {
+            btn.classList.add('hidden');
+        }
+    }
+
+    function applyFilters() {
+        filteredModels = allModels.filter(m => {
+            const q = currentFilters.search;
+            return (currentFilters.category === 'all' || m.type.toLowerCase() === currentFilters.category) &&
+                   (currentFilters.task === 'all' || (m.task || '').toLowerCase() === currentFilters.task) &&
+                   (currentFilters.modality === 'all' || m.modality === currentFilters.modality) &&
+                   (currentFilters.region === 'all' || m.region === currentFilters.region) &&
+                   (q === '' || (m.name || '').toLowerCase().includes(q) || (m.organization || '').toLowerCase().includes(q));
+        });
+
+        const dir = currentSort.direction === 'desc' ? -1 : 1;
+        filteredModels.sort((a, b) => {
+            if (currentSort.column === 'elo') return (b.elo - a.elo) * (dir * -1);
+            if (currentSort.column === 'name') return a.name.localeCompare(b.name) * dir;
+            if (currentSort.column === 'votes') return ((b.votes || 0) - (a.votes || 0)) * (dir * -1);
+            return 0;
+        });
+
+        showAll = false;
+        renderTable(filteredModels);
+    }
+
+    function filterMainCategory(cat, btn) {
+        currentFilters.category = cat;
+        document.querySelectorAll('.main-cat-btn').forEach(b => {
+            b.classList.remove('bg-blue-600', 'text-white');
+            b.classList.add('bg-slate-100', 'text-slate-700');
+        });
+        btn.classList.add('bg-blue-600', 'text-white');
+        btn.classList.remove('bg-slate-100', 'text-slate-700');
+        applyFilters();
+    }
+
+    function filterTask(task, btn) {
+        currentFilters.task = task;
+        document.querySelectorAll('.task-btn').forEach(b => {
+            b.classList.remove('bg-slate-600', 'text-white');
+            b.classList.add('bg-slate-100', 'text-slate-600');
+        });
+        btn.classList.add('bg-slate-600', 'text-white');
+        btn.classList.remove('bg-slate-100', 'text-slate-600');
+        applyFilters();
+    }
+
+    function filterData() {
+        currentFilters.modality = document.getElementById('modalityFilter').value;
+        currentFilters.region = document.getElementById('regionFilter').value;
+        applyFilters();
+    }
+
+    function sortTable(column) {
+        currentSort.direction = currentSort.column === column && currentSort.direction === 'desc' ? 'asc' : 'desc';
+        currentSort.column = column;
+        ['elo', 'name', 'votes'].forEach(col => {
+            const el = document.getElementById('sort-' + col);
+            if (!el) return;
+            el.textContent = col === column ? (currentSort.direction === 'desc' ? '↓' : '↑') : '↕';
+            el.classList.toggle('active', col === column);
+        });
+        applyFilters();
+    }
+
+    function resetFilters() {
+        currentFilters = { category: 'all', task: 'all', modality: 'all', region: 'all', search: '' };
+        document.getElementById('search-input').value = '';
+        document.getElementById('modalityFilter').value = 'all';
+        document.getElementById('regionFilter').value = 'all';
+        document.querySelectorAll('.main-cat-btn').forEach((b, i) => {
+            b.classList.toggle('bg-blue-600', i === 0);
+            b.classList.toggle('text-white', i === 0);
+            b.classList.toggle('bg-slate-100', i !== 0);
+            b.classList.toggle('text-slate-700', i !== 0);
+        });
+        document.querySelectorAll('.task-btn').forEach((b, i) => {
+            b.classList.toggle('bg-slate-600', i === 0);
+            b.classList.toggle('text-white', i === 0);
+            b.classList.toggle('bg-slate-100', i !== 0);
+            b.classList.toggle('text-slate-600', i !== 0);
+        });
+        applyFilters();
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('search-input').addEventListener('input', function (e) {
+            currentFilters.search = e.target.value.toLowerCase().trim();
+            applyFilters();
+        });
+
+        document.getElementById('show-more-btn').addEventListener('click', function () {
+            showAll = !showAll;
+            renderTable(filteredModels);
+        });
+
         fetch('./data/models.json')
-            .then(response => response.json()) // 把文件转换成数据
+            .then(r => r.json())
             .then(data => {
-                // 2. 找到网页上的表格盒子
-                const tableBody = document.getElementById('leaderboard-body');
-                
-                // 3. 把数据一条一条填进去
-                data.forEach(model => {
-                    // 拼接每一行的样子
-                    const row = `
-                        <tr>
-                            <td>#${model.rank}</td>
-                            <td><b>${model.name}</b></td>
-                            <td>${model.type}</td>
-                            <td><b>${model.elo}</b></td>
-                            <td>${model.organization}</td>
-                            <td>${model.license}</td>
-                        </tr>
-                    `;
-                    // 塞进表格里
-                    tableBody.innerHTML += row;
-                });
+                allModels = data;
+                filteredModels = [...data];
+                document.getElementById('model-count').textContent = data.length;
+                renderTable(filteredModels);
             })
-            .catch(error => console.error('fail to read the data:', error));
+            .catch(() => {
+                document.getElementById('leaderboard-body').innerHTML =
+                    '<tr><td colspan="9" class="px-6 py-12 text-center text-red-500">Failed to load model data.</td></tr>';
+            });
     });
 </script>
 </body>
